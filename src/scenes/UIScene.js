@@ -48,6 +48,22 @@ export default class UIScene extends Phaser.Scene {
       color: '#8888aa',
     }).setOrigin(0.5, 0);
 
+    this.exitMessage = this.add
+      .text(0, 0, '¡SALIDA ABIERTA!\nHuye al portal', {
+        fontFamily: 'monospace',
+        fontSize: '40px',
+        color: '#7af7e3',
+        align: 'center',
+        stroke: '#0a0a14',
+        strokeThickness: 6,
+      })
+      .setOrigin(0.5)
+      .setLineSpacing(10)
+      .setAlpha(0)
+      .setDepth(60);
+
+    this.exitShown = false;
+
     this.createJoystick();
     this.layout();
 
@@ -155,11 +171,24 @@ export default class UIScene extends Phaser.Scene {
   }
 
   onUIUpdate(state) {
-    this.fragmentText.setText(`◈ Eco ${state.fragments}/${state.total}`);
+    this.fragmentText.setText(`◈ Aura ${state.fragments}/${state.total}`);
     this.timeText.setText(`⏱ ${state.time}`);
     this.healthText.setText('♥'.repeat(Math.max(0, state.health)));
-    this.objectiveText.setText(
-      state.objectiveDone ? '¡SALIDA ABIERTA! Huye al portal' : 'Recolecta los fragmentos de eco'
-    );
+
+    if (state.objectiveDone) {
+      this.objectiveText.setText('');
+      if (!this.exitShown) {
+        this.exitShown = true;
+        this.showExitMessage();
+      }
+    } else {
+      this.objectiveText.setText('Recolecta los roscos de aura');
+    }
+  }
+
+  showExitMessage() {
+    this.exitMessage.setPosition(this.scale.width / 2, this.scale.height / 2);
+    this.tweens.add({ targets: this.exitMessage, alpha: 1, duration: 300 });
+    this.tweens.add({ targets: this.exitMessage, alpha: 0, delay: 2000, duration: 700 });
   }
 }

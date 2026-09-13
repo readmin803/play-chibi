@@ -95,21 +95,11 @@ export default class GameScene extends Phaser.Scene {
     this.bg = this.add.graphics();
 
     this.mapCircles = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 8; i++) {
       this.mapCircles.push({
-        x: Phaser.Math.Between(100, WORLD_WIDTH - 100),
-        y: Phaser.Math.Between(100, WORLD_HEIGHT - 100),
-        r: Phaser.Math.Between(120, 320),
-      });
-    }
-
-    this.mapEllipses = [];
-    for (let i = 0; i < 4; i++) {
-      this.mapEllipses.push({
-        x: Phaser.Math.Between(150, WORLD_WIDTH - 150),
-        y: Phaser.Math.Between(150, WORLD_HEIGHT - 150),
-        rx: Phaser.Math.Between(140, 360),
-        ry: Phaser.Math.Between(60, 180),
+        x: Phaser.Math.Between(80, WORLD_WIDTH - 80),
+        y: Phaser.Math.Between(80, WORLD_HEIGHT - 80),
+        r: Phaser.Math.Between(24, 80),
       });
     }
 
@@ -118,18 +108,8 @@ export default class GameScene extends Phaser.Scene {
 
   drawMap(lit) {
     this.bg.clear();
-
-    this.bg.fillStyle(lit ? 0x4a2b6e : COLORS.glow, 1);
-    this.bg.fillEllipse(WORLD_WIDTH * 0.15, WORLD_HEIGHT * 0.12, 900, 900);
-    this.bg.fillEllipse(WORLD_WIDTH * 0.88, WORLD_HEIGHT * 0.85, 1100, 1100);
-    this.bg.fillStyle(0x141426, 1);
-    this.bg.fillEllipse(WORLD_WIDTH * 0.7, WORLD_HEIGHT * 0.2, 700, 700);
-
-    this.bg.lineStyle(lit ? 4 : 3, lit ? COLORS.neonSoft : COLORS.neon, lit ? 0.65 : 0.18);
+    this.bg.lineStyle(2, lit ? 0xff8ae8 : COLORS.accent, lit ? 0.7 : 0.22);
     this.mapCircles.forEach((c) => this.bg.strokeCircle(c.x, c.y, c.r));
-
-    this.bg.lineStyle(2, COLORS.accent, lit ? 0.45 : 0.14);
-    this.mapEllipses.forEach((e) => this.bg.strokeEllipse(e.x, e.y, e.rx, e.ry));
   }
 
   lightUpMap() {
@@ -246,7 +226,7 @@ export default class GameScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(100);
 
-    const title = won ? 'NIVEL COMPLETADO' : 'HAS CAÍDO';
+    const title = won ? 'NIVEL COMPLETADO' : 'GAME OVER!';
     const sub = won ? 'La salida se abre…' : 'Inténtalo de nuevo';
 
     this.add
