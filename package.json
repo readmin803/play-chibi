@@ -1,0 +1,11 @@
+{
+  "name": "play-chibi",
+  "version": "0.1.0",
+  "description": "Juego web 2D minimalista y surrealista (Phaser 3)",
+  "type": "module",
+  "scripts": {
+    "start": "npx --yes http-server . -p 8080 -c-1"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

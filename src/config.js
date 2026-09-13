@@ -1,0 +1,34 @@
+export const GAME_WIDTH = 960;
+export const GAME_HEIGHT = 540;
+
+export const WORLD_WIDTH = 1600;
+export const WORLD_HEIGHT = 1200;
+
+export const COLORS = {
+  background: 0x0a0a14,
+  neon: 0x29f2d0,
+  neonSoft: 0x7af7e3,
+  accent: 0xff4fd8,
+  danger: 0xff5a6e,
+  glow: 0x2b1b3d,
+};
+
+export const PLAYER = {
+  speed: 260,
+  scale: 0.28,
+  maxHealth: 3,
+};
+
+export const ENEMY = {
+  speed: 110,
+  scale: 0.12,
+  damage: 1,
+  knockback: 320,
+};
+
+export const MISSIONS = [
+  { fragments: 2, enemies: 4, timeLimit: 60 },
+  { fragments: 3, enemies: 6, timeLimit: 55 },
+  { fragments: 4, enemies: 8, timeLimit: 50 },
+  { fragments: 5, enemies: 10, timeLimit: 45 },
+];
