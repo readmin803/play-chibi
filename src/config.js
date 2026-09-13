@@ -2,7 +2,7 @@ export const GAME_WIDTH = 960;
 export const GAME_HEIGHT = 540;
 
 export const WORLD_WIDTH = 1600;
-export const WORLD_HEIGHT = 1200;
+export const WORLD_HEIGHT = 1600;
 
 export const COLORS = {
   background: 0x0a0a14,

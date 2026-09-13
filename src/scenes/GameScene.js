@@ -9,8 +9,6 @@ import { input } from '../input.js';
 import {
   WORLD_WIDTH,
   WORLD_HEIGHT,
-  GAME_WIDTH,
-  GAME_HEIGHT,
   COLORS,
   MISSIONS,
   ENEMY,
@@ -69,6 +67,11 @@ export default class GameScene extends Phaser.Scene {
 
     this.cameras.main.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
     this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
+    this.applyCameraZoom();
+
+    this._onResize = () => this.applyCameraZoom();
+    this.scale.on('resize', this._onResize);
+    this.events.once('shutdown', () => this.scale.off('resize', this._onResize));
 
     this.timeEvent = this.time.addEvent({
       delay: 1000,
@@ -120,8 +123,7 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  setupInput() {
-    this.cursors = this.input.keyboard.createCursorKeys();
+  setupInput() {    this.cursors = this.input.keyboard.createCursorKeys();
     this.wasd = this.input.keyboard.addKeys({
       up: Phaser.Input.Keyboard.KeyCodes.W,
       down: Phaser.Input.Keyboard.KeyCodes.S,
@@ -139,6 +141,11 @@ export default class GameScene extends Phaser.Scene {
       return { x, y };
     }
     return { x: 80, y: 80 };
+  }
+
+  applyCameraZoom() {
+    const zoom = Phaser.Math.Clamp(this.scale.width / 900, 0.6, 1);
+    this.cameras.main.setZoom(zoom);
   }
 
   update(time, delta) {
@@ -214,8 +221,10 @@ export default class GameScene extends Phaser.Scene {
     this.physics.pause();
     this.timeEvent.remove();
 
+    const w = this.scale.width;
+    const h = this.scale.height;
     const overlay = this.add
-      .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.55)
+      .rectangle(w / 2, h / 2, w, h, 0x000000, 0.55)
       .setScrollFactor(0)
       .setDepth(100);
 
@@ -223,7 +232,7 @@ export default class GameScene extends Phaser.Scene {
     const sub = won ? 'La salida se abre…' : 'Inténtalo de nuevo';
 
     this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 30, title, {
+      .text(w / 2, h / 2 - 30, title, {
         fontFamily: 'monospace',
         fontSize: '48px',
         color: won ? '#7af7e3' : '#ff5a6e',
@@ -233,7 +242,7 @@ export default class GameScene extends Phaser.Scene {
       .setDepth(101);
 
     this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 30, sub, {
+      .text(w / 2, h / 2 + 30, sub, {
         fontFamily: 'monospace',
         fontSize: '22px',
         color: '#ffffff',

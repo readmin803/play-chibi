@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { GAME_WIDTH, GAME_HEIGHT, COLORS } from '../config.js';
+import { COLORS } from '../config.js';
 
 export default class PreloadScene extends Phaser.Scene {
   constructor() {
@@ -7,10 +7,10 @@ export default class PreloadScene extends Phaser.Scene {
   }
 
   preload() {
-    const barWidth = GAME_WIDTH * 0.5;
+    const barWidth = this.scale.width * 0.5;
     const barHeight = 14;
-    const x = GAME_WIDTH / 2;
-    const y = GAME_HEIGHT / 2;
+    const x = this.scale.width / 2;
+    const y = this.scale.height / 2;
 
     const box = this.add.graphics();
     box.fillStyle(0x1a1a2e, 1);
