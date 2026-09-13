@@ -20,8 +20,9 @@ export const PLAYER = {
 };
 
 export const ENEMY = {
-  speed: 110,
-  scale: 0.12,
+  speed: 320,
+  stepSize: 90,
+  scale: 0.56,
   damage: 1,
   knockback: 320,
 };

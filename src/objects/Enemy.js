@@ -1,6 +1,11 @@
 import * as Phaser from 'phaser';
 import { ENEMY } from '../config.js';
 
+const KNIGHT_MOVES = [
+  [2, 1], [2, -1], [-2, 1], [-2, -1],
+  [1, 2], [1, -2], [-1, 2], [-1, -2],
+];
+
 export default class Enemy extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y) {
     super(scene, x, y, 'monster');
@@ -11,23 +16,58 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.setCollideWorldBounds(true);
     this.body.setCircle(140, 0, 0);
 
-    this.wanderTimer = 0;
-    this.wanderDuration = Phaser.Math.Between(1000, 2600);
-    this.setRandomDirection();
+    this.speed = ENEMY.speed;
+    this.stepSize = ENEMY.stepSize;
+
+    this.segments = [];
+    this.segmentTimer = 0;
+    this.idleTimer = Phaser.Math.Between(300, 900);
+    this.setVelocity(0, 0);
   }
 
-  setRandomDirection() {
-    const angle = Phaser.Math.FloatBetween(0, Math.PI * 2);
-    this.direction = new Phaser.Math.Vector2(Math.cos(angle), Math.sin(angle));
-    this.setVelocity(this.direction.x * ENEMY.speed, this.direction.y * ENEMY.speed);
+  queueLMove() {
+    const m = KNIGHT_MOVES[Phaser.Math.Between(0, KNIGHT_MOVES.length - 1)];
+    const segs = [];
+    if (m[0] !== 0) {
+      segs.push({
+        vx: Math.sign(m[0]) * this.speed,
+        vy: 0,
+        duration: (Math.abs(m[0]) * this.stepSize / this.speed) * 1000,
+      });
+    }
+    if (m[1] !== 0) {
+      segs.push({
+        vx: 0,
+        vy: Math.sign(m[1]) * this.speed,
+        duration: (Math.abs(m[1]) * this.stepSize / this.speed) * 1000,
+      });
+    }
+    this.segments = segs;
+    this.startSegment();
+  }
+
+  startSegment() {
+    const seg = this.segments.shift();
+    if (!seg) {
+      this.setVelocity(0, 0);
+      this.idleTimer = Phaser.Math.Between(300, 900);
+      return;
+    }
+    this.segmentTimer = seg.duration;
+    this.setVelocity(seg.vx, seg.vy);
   }
 
   update(time, delta) {
-    this.wanderTimer += delta;
-    if (this.wanderTimer >= this.wanderDuration) {
-      this.wanderTimer = 0;
-      this.wanderDuration = Phaser.Math.Between(1000, 2600);
-      this.setRandomDirection();
+    if (this.segments.length > 0 || this.segmentTimer > 0) {
+      this.segmentTimer -= delta;
+      if (this.segmentTimer <= 0) {
+        this.startSegment();
+      }
+    } else {
+      this.idleTimer -= delta;
+      if (this.idleTimer <= 0) {
+        this.queueLMove();
+      }
     }
 
     if (this.body.velocity.x < -5) this.setFlipX(true);
