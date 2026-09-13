@@ -42,10 +42,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     const haloY = this.y - this.displayHeight / 2 - 20;
     const bob = Math.sin(time * 0.004) * 4;
     const breathe = 1 + Math.sin(time * 0.003) * 0.06;
-    const alpha = 0.28 + this.glowLevel * 0.65;
+    const alpha = 0.56 + this.glowLevel * 0.44;
     this.halo
       .setPosition(this.x, haloY + bob)
-      .setScale(breathe * 0.5 * (1 + this.glowLevel * 0.25))
+      .setScale(breathe * 0.25 * (1 + this.glowLevel * 0.25))
       .setAlpha(alpha)
       .setRotation(Math.sin(time * 0.002) * 0.08);
 

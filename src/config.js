@@ -1,8 +1,8 @@
 export const GAME_WIDTH = 960;
 export const GAME_HEIGHT = 540;
 
-export const WORLD_WIDTH = 1600;
-export const WORLD_HEIGHT = 1600;
+export const WORLD_WIDTH = 1200;
+export const WORLD_HEIGHT = 1200;
 
 export const COLORS = {
   background: 0x0a0a14,
@@ -14,7 +14,7 @@ export const COLORS = {
 };
 
 export const PLAYER = {
-  speed: 260,
+  speed: 420,
   scale: 0.28,
   maxHealth: 3,
 };
@@ -22,7 +22,7 @@ export const PLAYER = {
 export const ENEMY = {
   speed: 320,
   stepSize: 90,
-  scale: 0.56,
+  scale: 0.37,
   damage: 1,
   knockback: 320,
 };

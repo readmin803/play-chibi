@@ -67,11 +67,6 @@ export default class GameScene extends Phaser.Scene {
 
     this.cameras.main.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
     this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
-    this.applyCameraZoom();
-
-    this._onResize = () => this.applyCameraZoom();
-    this.scale.on('resize', this._onResize);
-    this.events.once('shutdown', () => this.scale.off('resize', this._onResize));
 
     this.timeEvent = this.time.addEvent({
       delay: 1000,
@@ -97,33 +92,60 @@ export default class GameScene extends Phaser.Scene {
   }
 
   buildBackground() {
-    const g = this.add.graphics();
+    this.bg = this.add.graphics();
 
-    g.fillStyle(COLORS.glow, 1);
-    g.fillEllipse(WORLD_WIDTH * 0.15, WORLD_HEIGHT * 0.12, 900, 900);
-    g.fillEllipse(WORLD_WIDTH * 0.88, WORLD_HEIGHT * 0.85, 1100, 1100);
-    g.fillStyle(0x141426, 1);
-    g.fillEllipse(WORLD_WIDTH * 0.7, WORLD_HEIGHT * 0.2, 700, 700);
-
-    g.lineStyle(3, COLORS.neon, 0.18);
+    this.mapCircles = [];
     for (let i = 0; i < 5; i++) {
-      const cx = Phaser.Math.Between(100, WORLD_WIDTH - 100);
-      const cy = Phaser.Math.Between(100, WORLD_HEIGHT - 100);
-      const r = Phaser.Math.Between(120, 320);
-      g.strokeCircle(cx, cy, r);
+      this.mapCircles.push({
+        x: Phaser.Math.Between(100, WORLD_WIDTH - 100),
+        y: Phaser.Math.Between(100, WORLD_HEIGHT - 100),
+        r: Phaser.Math.Between(120, 320),
+      });
     }
 
-    g.lineStyle(2, COLORS.accent, 0.14);
+    this.mapEllipses = [];
     for (let i = 0; i < 4; i++) {
-      const cx = Phaser.Math.Between(150, WORLD_WIDTH - 150);
-      const cy = Phaser.Math.Between(150, WORLD_HEIGHT - 150);
-      const rx = Phaser.Math.Between(140, 360);
-      const ry = Phaser.Math.Between(60, 180);
-      g.strokeEllipse(cx, cy, rx, ry);
+      this.mapEllipses.push({
+        x: Phaser.Math.Between(150, WORLD_WIDTH - 150),
+        y: Phaser.Math.Between(150, WORLD_HEIGHT - 150),
+        rx: Phaser.Math.Between(140, 360),
+        ry: Phaser.Math.Between(60, 180),
+      });
     }
+
+    this.drawMap(false);
   }
 
-  setupInput() {    this.cursors = this.input.keyboard.createCursorKeys();
+  drawMap(lit) {
+    this.bg.clear();
+
+    this.bg.fillStyle(lit ? 0x4a2b6e : COLORS.glow, 1);
+    this.bg.fillEllipse(WORLD_WIDTH * 0.15, WORLD_HEIGHT * 0.12, 900, 900);
+    this.bg.fillEllipse(WORLD_WIDTH * 0.88, WORLD_HEIGHT * 0.85, 1100, 1100);
+    this.bg.fillStyle(0x141426, 1);
+    this.bg.fillEllipse(WORLD_WIDTH * 0.7, WORLD_HEIGHT * 0.2, 700, 700);
+
+    this.bg.lineStyle(lit ? 4 : 3, lit ? COLORS.neonSoft : COLORS.neon, lit ? 0.65 : 0.18);
+    this.mapCircles.forEach((c) => this.bg.strokeCircle(c.x, c.y, c.r));
+
+    this.bg.lineStyle(2, COLORS.accent, lit ? 0.45 : 0.14);
+    this.mapEllipses.forEach((e) => this.bg.strokeEllipse(e.x, e.y, e.rx, e.ry));
+  }
+
+  lightUpMap() {
+    this.drawMap(true);
+    this.tweens.add({
+      targets: this.bg,
+      alpha: { from: 0.55, to: 1 },
+      duration: 650,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
+  }
+
+  setupInput() {
+    this.cursors = this.input.keyboard.createCursorKeys();
     this.wasd = this.input.keyboard.addKeys({
       up: Phaser.Input.Keyboard.KeyCodes.W,
       down: Phaser.Input.Keyboard.KeyCodes.S,
@@ -141,11 +163,6 @@ export default class GameScene extends Phaser.Scene {
       return { x, y };
     }
     return { x: 80, y: 80 };
-  }
-
-  applyCameraZoom() {
-    const zoom = Phaser.Math.Clamp(this.scale.width / 900, 0.6, 1);
-    this.cameras.main.setZoom(zoom);
   }
 
   update(time, delta) {
@@ -190,6 +207,7 @@ export default class GameScene extends Phaser.Scene {
     this.pushUI();
     if (this.collected >= this.mission.fragments) {
       this.portal.activate();
+      this.lightUpMap();
       this.objectiveDone = true;
       this.pushUI();
     }
