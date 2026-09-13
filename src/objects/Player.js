@@ -13,10 +13,15 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.setCollideWorldBounds(true);
     this.body.setCircle(80, 0, 0);
 
-    this.halo = scene.add.image(x, y, 'glow').setBlendMode(Phaser.BlendModes.ADD).setDepth(0);
+    this.halo = scene.add.image(x, y, 'halo').setBlendMode(Phaser.BlendModes.ADD).setDepth(0);
 
     this.health = PLAYER.maxHealth;
     this.invincibleUntil = 0;
+    this.glowLevel = 0;
+  }
+
+  setGlowLevel(level) {
+    this.glowLevel = Phaser.Math.Clamp(level, 0, 1);
   }
 
   update(time) {
@@ -34,8 +39,15 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     if (dx < -0.05) this.setFlipX(true);
     else if (dx > 0.05) this.setFlipX(false);
 
-    const pulse = 1 + Math.sin(time * 0.006) * 0.08;
-    this.halo.setPosition(this.x, this.y).setScale(pulse);
+    const haloY = this.y - this.displayHeight / 2 - 20;
+    const bob = Math.sin(time * 0.004) * 4;
+    const breathe = 1 + Math.sin(time * 0.003) * 0.06;
+    const alpha = 0.28 + this.glowLevel * 0.65;
+    this.halo
+      .setPosition(this.x, haloY + bob)
+      .setScale(breathe * (1 + this.glowLevel * 0.25))
+      .setAlpha(alpha)
+      .setRotation(Math.sin(time * 0.002) * 0.08);
 
     if (this.invincibleUntil > 0 && time >= this.invincibleUntil) {
       this.setAlpha(1);

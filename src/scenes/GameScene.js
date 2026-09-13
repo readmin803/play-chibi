@@ -157,6 +157,20 @@ export default class GameScene extends Phaser.Scene {
     this.player.update(time);
     this.fragments.getChildren().forEach((f) => f.update(time));
     this.enemies.getChildren().forEach((e) => e.update(time, delta));
+    this.portal.update(time, delta);
+
+    if (this.portal.active) {
+      const dx = this.portal.x - this.player.x;
+      const dy = this.portal.y - this.player.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist > 30 && dist < 300) {
+        const pull = (1 - dist / 300) * 90;
+        this.player.setVelocity(
+          this.player.body.velocity.x + (dx / dist) * pull,
+          this.player.body.velocity.y + (dy / dist) * pull
+        );
+      }
+    }
   }
 
   onFragment(player, fragment) {
@@ -165,6 +179,7 @@ export default class GameScene extends Phaser.Scene {
 
   onFragmentCollected() {
     this.collected += 1;
+    this.player.setGlowLevel(this.collected / this.mission.fragments);
     this.pushUI();
     if (this.collected >= this.mission.fragments) {
       this.portal.activate();

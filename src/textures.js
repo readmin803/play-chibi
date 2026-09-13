@@ -27,13 +27,11 @@ export function generateTextures(scene) {
   g.generateTexture('portal', 128, 128);
 
   g.clear();
-  g.fillStyle(COLORS.neon, 0.10);
-  g.fillCircle(64, 64, 64);
-  g.fillStyle(COLORS.neon, 0.18);
-  g.fillCircle(64, 64, 44);
-  g.fillStyle(COLORS.neon, 0.28);
-  g.fillCircle(64, 64, 26);
-  g.generateTexture('glow', 128, 128);
+  g.lineStyle(3, COLORS.neon, 0.8);
+  g.strokeEllipse(90, 45, 150, 66);
+  g.lineStyle(6, COLORS.neonSoft, 0.22);
+  g.strokeEllipse(90, 45, 168, 82);
+  g.generateTexture('halo', 180, 90);
 
   g.destroy();
 }
